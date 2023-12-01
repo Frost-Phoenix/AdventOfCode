@@ -2,7 +2,7 @@
 
 
 def part_1(file: str) -> int:
-    """Compute the sum of all first and second digit of each line in the file
+    """Compute the sum of all first and last digit of each line in the file
     
     Args:
         :file (str): input file
@@ -11,41 +11,50 @@ def part_1(file: str) -> int:
         int: sum 
     """
 
+    def solve_line(line: str) -> int:
+        for c in line:
+            if c.isdigit():
+                return int(c)
+
     sum = 0
-    line_nb = 0
 
     with open(file, "r") as f:
         for l in f:
-            for c in l:
-                if c.isdigit():
-                    line_nb += int(c) * 10
-                    break
-            for c in reversed(l):
-                if c.isdigit():
-                    line_nb += int(c)
-                    break
-            sum += line_nb
-            line_nb = 0
+            sum += solve_line(l) * 10 + solve_line(reversed(l))            
 
     return sum
 
 def part_2(file: str) -> int:
+    """Same as part one but account for digit spells with letters
+    
+    Args:
+        :file (str): input file
+    
+    Returns:
+        int: sum 
+    """
+
     valide_words = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9}
-
     sum = 0
-    line_nb = 0
 
+    def solve_line(line: str, backwards: int = False) -> int:
+        buffer = ""
+        for c in line:
+            if c.isdigit():
+                return int(c)
+            else:
+                if len(buffer) < 5: buffer += c
+                else: buffer = buffer[1:] + c
+
+                tmp_buffer = buffer if not backwards else buffer[::-1]
+
+                for k in valide_words.keys():
+                    if k in tmp_buffer:
+                        return valide_words[k]
+                    
     with open(file, "r") as f:
         for l in f:
-            for c in l:
-                if c.isdigit():
-                    line_nb += int(c) * 10
-                    break
-            for c in reversed(l):
-                if c.isdigit():
-                    line_nb += int(c)
-                    break
-            sum += line_nb
+            sum += solve_line(l) * 10 + solve_line(reversed(l), backwards=True)
             line_nb = 0
 
     return sum
