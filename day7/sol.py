@@ -3,9 +3,30 @@
 from collections import Counter
 
 
-def part_1(file: str) -> int:
+def get_sum(hands: list[(str,int)], nb_hands: int, power) -> int:
     sum = 0
-    
+
+    for l in hands:
+        used = []
+        for i in range(len(l)):
+            current_max = None
+            for e in l:
+                if e not in used:
+                    current_max = e
+                    break
+            for hand, bid in l:
+                if (hand, bid) not in used and current_max != (hand, bid):
+                    for i in range(len(hand)):
+                        power_dif = power(hand[i]) - power(current_max[0][i])
+                        if power_dif > 0: current_max = (hand, bid)
+                        elif power_dif < 0: break
+            used.append(current_max)
+            sum += current_max[1] * nb_hands
+            nb_hands -= 1
+
+    return sum
+
+def part_1(file: str) -> int:
     nb_hands = 0
     hands = {
         "five_of_a_kind": [], 
@@ -43,29 +64,9 @@ def part_1(file: str) -> int:
         if c.isdigit(): return int(c)
         else: return {"A": 14, "K": 13, "Q": 12, "J": 11, "T": 10}[c]
 
-    for l in hands.values():
-        used = []
-        for i in range(len(l)):
-            current_max = None
-            for e in l:
-                if e not in used:
-                    current_max = e
-                    break
-            for hand, bid in l:
-                if (hand, bid) not in used and current_max != (hand, bid):
-                    for i in range(len(hand)):
-                        power_dif = power(hand[i]) - power(current_max[0][i])
-                        if power_dif > 0: current_max = (hand, bid)
-                        elif power_dif < 0: break
-            used.append(current_max)
-            sum += current_max[1] * nb_hands
-            nb_hands -= 1
-
-    return sum
+    return get_sum(hands.values(), nb_hands, power)
 
 def part_2(file: str):
-    sum = 0
-    
     nb_hands = 0
     hands = {
         "five_of_a_kind": [], 
@@ -121,25 +122,7 @@ def part_2(file: str):
         if c.isdigit(): return int(c)
         else: return {"A": 14, "K": 13, "Q": 12, "T": 10, "J": 0}[c]
 
-    for l in hands.values():
-        used = []
-        for i in range(len(l)):
-            current_max = None
-            for e in l:
-                if e not in used:
-                    current_max = e
-                    break
-            for hand, bid in l:
-                if (hand, bid) not in used and current_max != (hand, bid):
-                    for i in range(len(hand)):
-                        power_dif = power(hand[i]) - power(current_max[0][i])
-                        if power_dif > 0: current_max = (hand, bid)
-                        elif power_dif < 0: break
-            used.append(current_max)
-            sum += current_max[1] * nb_hands
-            nb_hands -= 1
-
-    return sum
+    return get_sum(hands.values(), nb_hands, power)
 
 def main():
     # 249483956
