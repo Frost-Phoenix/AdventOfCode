@@ -1,7 +1,7 @@
 # https://adventofcode.com/2023/day/ 
 
 
-def part_1(file: str) -> int:
+def solve(file: str, part: int) -> int:
     lines = open(file, 'r').readlines()
 
     res = 0
@@ -11,7 +11,7 @@ def part_1(file: str) -> int:
 
         values = list(map(int, l.split()))
         last_val = values[-1]
-        last_changes = [values[-1]]
+        changes = [values[-1 if part == 1 else 0]] 
         
         all_zero = False
         while not all_zero:
@@ -22,34 +22,26 @@ def part_1(file: str) -> int:
                 new_val.append(step)
 
                 if step != 0: all_zero = False
-                
-            last_changes.append(values[-1] - values[-2])
+
+            if part == 1: changes.append(values[-1] - values[-2])
+            else: changes.append(values[1] - values[0])
             values = new_val
 
-        for i in range(len(last_changes) - 2, -1, -1):
-            last_changes[i] += last_changes[i+1]
+        for i in range(len(changes) - 2, -1, -1):
+            if part == 1: changes[i] += changes[i+1]
+            else: changes[i] -= changes[i+1]
 
-        res += last_changes[0]
-
-    return res
-
-def part_2(file: str) -> int:
-    lines = open(file, 'r').readlines()
-
-    res = 0
-
-    for l in lines:
-        l = l[:-1]
+        res += changes[0]
 
     return res
 
 def main() -> None:
-    # 
-    part_1_sol = part_1("input.txt")
+    # 1898776583
+    part_1_sol = solve("input.txt", 1)
     print(f"sol part 1: {part_1_sol}")
     
-    # 
-    part_2_sol = part_2("input.txt")
+    # 1100
+    part_2_sol = solve("input.txt", 2)
     print(f"sol part 2: {part_2_sol}")
 
 
