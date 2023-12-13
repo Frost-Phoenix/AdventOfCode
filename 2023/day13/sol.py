@@ -50,19 +50,15 @@ def part_1(file: str) -> int:
     
     girds.append(tmp)
 
-    tmp = []
     for i,g in enumerate(girds):
         horizontal_sym = check_horizontal_sym(g)
         if horizontal_sym != None:
-            tmp.append((i,horizontal_sym * 100))
             res += horizontal_sym * 100
         else:
             vertical_sym = check_vertical_sym(g)
-            tmp.append((i,vertical_sym))
             res += vertical_sym
 
-    print(res)
-    return tmp
+    return res
 
 def part_2(file: str) -> int:
 
@@ -83,14 +79,16 @@ def part_2(file: str) -> int:
             if grid[i] != grid[i + 1]: fix = check_fix(grid, i, i+1)
             if grid[i] == grid[i + 1] or fix:
                 t = i+1 >= n // 2
-                r = range(i+1, n) if t else range(i-1, -1, -1)
+                r = range(i+2, n) if t else range(i-1, -1, -1)
                 for j in r:
                     j2 = i-(j-i)+1 if t else i+(i-j)+1
                     if grid[j] != grid[j2]:
                         if fix: break
                         if check_fix(grid, j, j2): fix = True
                         else: break
-                else: return i + 1
+                else: 
+                    if fix: return i + 1
+            fix = False
 
         return None
 
@@ -123,7 +121,8 @@ def part_2(file: str) -> int:
                         if fix: break
                         if check_fix(c2, c-(c2-c)+1 if t else c+(c-c2)+1, nb_row): fix = True
                         else: break
-                else: return c + 1
+                else: 
+                    if fix: return c + 1
 
         return None
 
@@ -142,32 +141,24 @@ def part_2(file: str) -> int:
     
     girds.append(tmp)
 
-    tmp = []
     for i,g in enumerate(girds):
         horizontal_sym = check_horizontal_sym(g)
         if horizontal_sym != None:
-            tmp.append((i,horizontal_sym * 100))
             res += horizontal_sym * 100
         else:
             vertical_sym = check_vertical_sym(g)
-            tmp.append((i,vertical_sym))
             res += vertical_sym
 
-    print(res)
-    return tmp
+    return res
 
 def main() -> None:
     # 30487
     part_1_sol = part_1("input.txt")
     print(f"sol part 1: {part_1_sol}")
     
-    # 
+    # 31954
     part_2_sol = part_2("input.txt")
     print(f"sol part 2: {part_2_sol}")
-
-    for i in range(len(part_1_sol)):
-        if part_1_sol[i] < part_2_sol[i]:
-            print(part_1_sol[i], "\t", part_2_sol[i])
 
 
 if __name__  == "__main__":
