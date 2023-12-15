@@ -14,13 +14,12 @@ def part_1(file: str) -> int:
     return sum([get_hash(l) for l in open(file, 'r').readline().split(",")])
 
 def part_2(file: str) -> int:
-    label_in_box = lambda label, box: any(filter(lambda x: False if x == None else label in x, box))
     box = [[] for i in range(256)]
 
     for l in open(file, 'r').readline().split(','):
         label = l[:-1] if "-" in l else l[:-2]
         id = get_hash(label)
-        is_in = label_in_box(label,box[id])
+        is_in = any(filter(lambda x: False if x == None else label in x, box[id]))
 
         if l[-1] == '-': 
             if is_in: box[id] = list(filter(lambda x: label not in x, box[id]))
