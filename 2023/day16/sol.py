@@ -11,24 +11,22 @@ def get_grid(file: str) -> list[list[str]]:
 
     return [["#"] * len(grid[0])] + grid + [["#"] * len(grid[0])]
 
-def part_1(file: str) -> int:
-    grid = get_grid(file)
-
+def get_nb_tile_energized(grid: list[list[str]], start_pos: tuple[tuple[int,int], str]) -> int:
     directions = {
-        "U": (1,0),
+        "D": (1,0),
         "L": (0,-1),
-        "D": (-1,0),
+        "U": (-1,0),
         "R": (0,1)
     }
     moves = {
         '-': (((0,1), "R"), ((0,-1), "L")),
-        '|': (((1,0), "U"), ((-1,0), "D")),
-        '/': {'L': ((1,0), "U"), 'R': ((-1,0), "D"), 'U': ((0,-1), "L"), 'D': ((0,1), "R")},
-        chr(92): {'L': ((-1,0), "D"), 'R': ((1,0), "U"), 'U': ((0,1), "R"), 'D': ((0,-1), "L")},
+        '|': (((1,0), "D"), ((-1,0), "U")),
+        '/': {'L': ((1,0), "D"), 'R': ((-1,0), "U"), 'U': ((0,1), "R"), 'D': ((0,-1), "L")},
+        chr(92): {'L': ((-1,0), "U"), 'R': ((1,0), "D"), 'U': ((0,-1), "L"), 'D': ((0,1), "R")},
     }
 
     pos_list = queue()
-    pos_list.append(((1,1), 'R'))
+    pos_list.append(start_pos)
 
     nb_row = len(grid)
     nb_col = len(grid[0])
@@ -60,10 +58,32 @@ def part_1(file: str) -> int:
 
     return nb_energized
 
+def part_1(file: str) -> int:
+    grid = get_grid(file)
+
+    return get_nb_tile_energized(grid, ((1,1), "R"))
+
+def part_2(file: str) -> int:
+    grid = get_grid(file)
+
+    nb_row = len(grid)
+    nb_col = len(grid[0])
+
+    top_row    = max([get_nb_tile_energized(grid, ((1,x), "D"))          for x in range(1, nb_col - 1)])
+    bottom_row = max([get_nb_tile_energized(grid, ((nb_row - 2,x), "U")) for x in range(1, nb_col - 1)])
+    left_col   = max([get_nb_tile_energized(grid, ((x,1), "D"))          for x in range(1, nb_row - 1)])
+    right_col  = max([get_nb_tile_energized(grid, ((x,nb_col - 2), "U")) for x in range(1, nb_row - 1)])
+
+    return max([top_row, bottom_row, left_col, right_col])
+
 def main() -> None:
     # 7788
     part_1_sol = part_1("input.txt")
     print(f"sol part 1: {part_1_sol}")
+    
+    # 7987
+    part_2_sol = part_2("input.txt")
+    print(f"sol part 2: {part_2_sol}")
 
 
 if __name__  == "__main__":
