@@ -1,4 +1,6 @@
-# https://adventofcode.com/2023/day/ 
+# https://adventofcode.com/2023/day/18
+
+from collections import deque as queue
 
 
 def print_grid(grid: list[list[str]]) -> None:
@@ -7,9 +9,9 @@ def print_grid(grid: list[list[str]]) -> None:
             print(c, end='')
         print()
 
-def get_grid_size(moves: list[str]) -> int:
+def get_min_max_pos(moves: list[str]) -> int:
     x,y = 0,0
-    pos = []
+    pos_x, pos_y = [0], [0]
 
     for l in moves:
         l = l[:-1].split()
@@ -20,14 +22,13 @@ def get_grid_size(moves: list[str]) -> int:
         elif d == 'R': x += nb
         elif d == 'L': x -= nb
 
-        pos.append((y,x))
+        pos_x.append(x)
+        pos_y.append(y)
 
-    return max(pos)
+    return ((min(pos_x),min(pos_y)), (max(pos_x),max(pos_y)))
 
-def get_grid(moves: list[str]) -> list[list[str]]:
-    nb_row, nb_col = get_grid_size(moves)
-
-    return [['.' for __ in range(nb_col + 1)] for _ in range(nb_row + 1)]
+def get_grid(moves: list[str], min_pos: tuple[int,int], max_pos: tuple[int,int]) -> list[list[str]]:
+    return [['.' for __ in range(abs(min_pos[0]) + abs(max_pos[0]) + 1)] for _ in range(abs(min_pos[1]) + abs(max_pos[1]) + 1)]
 
 def dig(grid: list[list[str]], x: int, y: int, d: int, nb: int) -> tuple[int,int]:
     for _ in range(nb):
@@ -47,13 +48,39 @@ def get_new_grid(grid: list[list[str]]) -> list[list[str]]:
 
     return tmp + grid + tmp
 
+def get_outer_cells_nb(grid: list[list[str]]) -> int:
+    nb = 0    
+    q = queue()
+    q.append((0,0))
+
+    visited = grid.copy()
+
+    nb_row = len(grid)
+    nb_col = len(grid[0])
+
+    # BFS
+    while q:
+        x, y = q.popleft()
+
+        if visited[y][x] not in "#$":
+            visited[y][x] = '$'
+            
+            if x != 0 and x != nb_col - 1 and y != 0 and y != nb_row - 1:
+                nb += 1
+
+            for nx, ny in [(0,1),(0,-1),(1,0),(-1,0)]:
+                if 0 <= x+nx < nb_col and 0 <= y+ny < nb_row:
+                    if visited[y+ny][x+nx] not in "#$":
+                        q.append((x+nx,y+ny))
+
+    return nb_row * nb_col - sum([i.count('$') for i in visited])
+
 def part_1(file: str) -> int:
     lines = open(file, 'r').readlines()
 
-    res = 0
-    moves = []
-    x,y = 0,0
-    grid = get_grid(lines)
+    min_pos, max_pos = get_min_max_pos(lines)
+    x,y = abs(min_pos[0]),abs(min_pos[1])
+    grid = get_grid(lines, min_pos, max_pos)
 
     for l in lines:
         l = l[:-1].split()
@@ -63,29 +90,13 @@ def part_1(file: str) -> int:
 
     grid = get_new_grid(grid)
 
-    print_grid(grid)
-
-    return res
-
-def part_2(file: str) -> int:
-    lines = open(file, 'r').readlines()
-
-    res = 0
-
-    for l in lines:
-        l = l[:-1]
-
-    return res
+    return get_outer_cells_nb(grid)
 
 def main() -> None:
-    # 
+    # 106459
     part_1_sol = part_1("input.txt")
     print(f"sol part 1: {part_1_sol}")
     
-    # 
-    part_2_sol = part_2("input.txt")
-    print(f"sol part 2: {part_2_sol}")
-
 
 if __name__  == "__main__":
     main()
