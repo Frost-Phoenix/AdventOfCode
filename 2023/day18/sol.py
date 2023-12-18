@@ -92,8 +92,37 @@ def part_1(file: str) -> int:
 
     return get_outer_cells_nb(grid)
 
+def parse(val: str) -> (str, int):
+    return (int(val[:-1][-1]), int(val[2:-2], 16))
+
+def get_pos(moves: list[str]) -> (list[tuple[str]], int):
+    x,y = 0,0
+    distance = 0
+    pos = [(0,0)]
+
+    for l in moves:
+        l = l[:-1].split()
+        d, nb = parse(l[-1])
+        distance += nb
+
+        if d == 3: y -= nb
+        elif d == 1: y += nb
+        elif d == 0: x += nb
+        elif d == 2: x -= nb
+
+        pos.append((x,y))
+
+    return (pos, distance)
+
 def part_2(file: str) -> int:
-    pass
+    lines = open(file, 'r').readlines()
+    
+    pos, distance = get_pos(lines)
+
+    A = abs(sum(pos[i][0] * (pos[i - 1][1] - pos[(i + 1) % len(pos)][1]) for i in range(len(pos)))) // 2
+    i = A - distance // 2 + 1
+
+    return i + distance
 
 def main() -> None:
     # 106459
