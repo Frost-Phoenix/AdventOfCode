@@ -92,11 +92,17 @@ def part_1(file: str) -> int:
 
     return get_outer_cells_nb(grid)
 
+def part_2(file: str) -> int:
+    pass
+
 def main() -> None:
     # 106459
     part_1_sol = part_1("input.txt")
     print(f"sol part 1: {part_1_sol}")
     
+    # 
+    part_2_sol = part_2("input.txt")
+    print(f"sol part 2: {part_2_sol}")
 
 if __name__  == "__main__":
     main()
