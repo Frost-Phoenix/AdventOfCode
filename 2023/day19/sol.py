@@ -46,17 +46,33 @@ def process_part(workflows: dict[str: list[str]], part: list[int]) -> bool:
     return False
 
 def part_1(file: str) -> int:
-    res = 0
-    
     workflows, parts = parse_input(file)
-    
     return sum([sum(p) for p in parts if (process_part(workflows, p))])
+
+def get_all_path(workflows: dict[str: list[str]], current_w: str, l: list[str], ranges) -> int:
+    if current_w in "AR": 
+        for w in l: print(w, "\t", end="")
+        print(current_w)
+        return
+
+    for rule in workflows[current_w]:
+        if ':' in rule: get_all_path(workflows, rule.split(':')[1], l + [current_w])
+        else: get_all_path(workflows, rule, l + [current_w])
+
+def part_2(file: str) -> int:
+    workflows = parse_input(file)[0]
+
+    get_all_path(workflows, "in", [], {key: range(1,4001) for key in "xmas"})
 
 def main() -> None:
     # 487623
-    part_1_sol = part_1("input.txt")
-    print(f"sol part 1: {part_1_sol}")
+    # part_1_sol = part_1("input.txt")
+    # print(f"sol part 1: {part_1_sol}")
     
+    # 
+    part_2_sol = part_2("input.txt")
+    print(f"sol part 2: {part_2_sol}")
+
 
 if __name__  == "__main__":
     main()
