@@ -1,7 +1,6 @@
 package day04
 
 import "core:fmt"
-import "core:os"
 import "core:slice"
 import "core:strconv"
 import "core:strings"
@@ -104,7 +103,7 @@ part1 :: proc(passports: []string) -> int {
     res := 0
 
     for passport in passports {
-        fields := strings.split_multi(passport, {" ", "\n"}, context.temp_allocator)
+        fields := strings.split_multi(passport, {" ", "\n"})
 
         if is_valid_passport(fields, false) {
             res += 1
@@ -118,7 +117,7 @@ part2 :: proc(passports: []string) -> int {
     res := 0
 
     for passport in passports {
-        fields := strings.split_multi(passport, {" ", "\n"}, context.temp_allocator)
+        fields := strings.split_multi(passport, {" ", "\n"})
 
         if is_valid_passport(fields, true) {
             res += 1
@@ -129,22 +128,14 @@ part2 :: proc(passports: []string) -> int {
 }
 
 main :: proc() {
-    data, err := os.read_entire_file(INPUT, context.temp_allocator)
-    if err != nil {
-        fmt.eprintfln("Failed to load the file '%s': %v", INPUT, err)
-        os.exit(1)
-    }
+    context.allocator = context.temp_allocator
 
+    data := #load(INPUT)
     file := string(data)
-    passports := strings.split(file, "\n\n", context.temp_allocator)
+    passports := strings.split(file, "\n\n")
 
-    fmt.print("Part 1: ")
-    sol1 := part1(passports)
-    fmt.println(sol1)
-
-    fmt.print("Part 2: ")
-    sol2 := part2(passports)
-    fmt.println(sol2)
+    fmt.printfln("Part 1: %v", part1(passports))
+    fmt.printfln("Part 2: %v", part2(passports))
 
     free_all(context.temp_allocator)
 }

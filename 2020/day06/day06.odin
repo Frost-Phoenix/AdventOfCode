@@ -12,7 +12,7 @@ part1 :: proc(groups: []string) -> int {
     for group in groups {
         yes: bit_set['a' ..= 'z'] = {}
 
-        for person in strings.split_lines(group, context.temp_allocator) {
+        for person in strings.split_lines(group) {
             for answer in person {
                 yes += {answer}
             }
@@ -28,9 +28,9 @@ part2 :: proc(groups: []string) -> int {
     res := 0
 
     for group in groups {
-        yes := make(map[rune]int, context.temp_allocator)
+        yes := make(map[rune]int)
 
-        persons := strings.split_lines(group, context.temp_allocator)
+        persons := strings.split_lines(group)
         for person in persons {
             for answer in person {
                 yes[answer] += 1
@@ -49,12 +49,16 @@ part2 :: proc(groups: []string) -> int {
 }
 
 main :: proc() {
+    context.allocator = context.temp_allocator
+
     data := #load(INPUT)
     file := string(data)
-    groups := strings.split(file, "\n\n", context.temp_allocator)
+    groups := strings.split(file, "\n\n")
 
     // fmt.println(groups)
 
     fmt.printfln("Part 1: %v", part1(groups))
     fmt.printfln("Part 2: %v", part2(groups))
+
+    free_all(context.temp_allocator)
 }

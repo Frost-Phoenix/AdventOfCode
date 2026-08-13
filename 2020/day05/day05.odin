@@ -70,7 +70,7 @@ part1 :: proc(lines: []string) -> int {
 part2 :: proc(lines: []string) -> int {
     res := 0
 
-    ids := make(map[int]bool, context.temp_allocator)
+    ids := make(map[int]bool)
 
     for line in lines {
         seat_id := get_seat_id(line)
@@ -92,17 +92,16 @@ part2 :: proc(lines: []string) -> int {
 }
 
 main :: proc() {
+    context.allocator = context.temp_allocator
+
     data := #load(INPUT)
     file := string(data)
-    lines := strings.split_lines(file, context.temp_allocator)
+    lines := strings.split_lines(file)
 
     // fmt.printfln("%#v", lines)
 
-    fmt.print("Part 1: ")
-    sol1 := part1(lines)
-    fmt.println(sol1)
+    fmt.printfln("Part 1: %v", part1(lines))
+    fmt.printfln("Part 2: %v", part2(lines))
 
-    fmt.print("Part 2: ")
-    sol2 := part2(lines)
-    fmt.println(sol2)
+    free_all(context.temp_allocator)
 }

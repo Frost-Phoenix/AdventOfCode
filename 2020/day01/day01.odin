@@ -1,7 +1,6 @@
 package day01
 
 import "core:fmt"
-import "core:os"
 import "core:strconv"
 import "core:strings"
 
@@ -9,14 +8,9 @@ import "core:strings"
 INPUT :: "input.txt"
 
 part1 :: proc(values: []int) -> int {
-    fmt.println("part1:")
-
     for v1 in values {
         for v2 in values {
             if v1 + v2 == 2020 {
-                fmt.printfln("%v + %v = 2020", v1, v2)
-                fmt.printfln("res: %v", v1 * v2)
-
                 return v1 * v2
             }
         }
@@ -26,16 +20,10 @@ part1 :: proc(values: []int) -> int {
 }
 
 part2 :: proc(values: []int) -> int {
-    fmt.println("part2:")
-
     for v1 in values {
         for v2 in values {
             for v3 in values {
-
                 if v1 + v2 + v3 == 2020 {
-                    fmt.printfln("%v + %v + %v = 2020", v1, v2, v3)
-                    fmt.printfln("res: %v", v1 * v2 * v3)
-
                     return v1 * v2 * v3
                 }
             }
@@ -46,16 +34,11 @@ part2 :: proc(values: []int) -> int {
 }
 
 main :: proc() {
-    data, err := os.read_entire_file(INPUT, context.allocator)
-    if err != nil {
-        fmt.eprintfln("Failed to load the file '%s': %v", INPUT, err)
-        os.exit(1)
-    }
-    defer delete(data)
+    context.allocator = context.temp_allocator
 
+    data := #load(INPUT)
     file := string(data)
     lines := strings.split_lines(file)
-    defer delete(lines)
 
     values := make([dynamic]int)
     defer delete(values)
@@ -66,6 +49,8 @@ main :: proc() {
         append(&values, val)
     }
 
-    part1(values[:])
-    part2(values[:])
+    fmt.printfln("Part 1: %v", part1(values[:]))
+    fmt.printfln("Part 2: %v", part2(values[:]))
+
+    free_all(context.temp_allocator)
 }
