@@ -6,5 +6,6 @@
     "spaces": 4,
     "indent_cases": true,
     "inline_single_stmt_case": true,
-    "space_single_line_blocks": true
+    "space_single_line_blocks": true,
+    "align_constant_definitions": true
 }
